@@ -191,14 +191,14 @@ li
 @media (max-width: 760px){
 .button
 {
-    background-color: blue;
-    color: white;
-    border: none;
     padding:0.6rem;
-    border-radius: 0.5rem;
-    margin: 3px;
-    transition: all 0.7s;
     font-size: 1.3rem;
-    cursor: pointer;
 }
+.button:hover{
+    font-size:1rem ;
+ }
+ #modal-add h3{
+    font-size: 1.5rem;
+
+ }
 }

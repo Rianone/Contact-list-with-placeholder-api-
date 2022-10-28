@@ -11,6 +11,7 @@ var name_up = document.getElementById("name2");
 var number_up = document.getElementById("number2");
 var up_btn = document.getElementById("update-btn");
 
+
 close.addEventListener("click", function(){
     modal_up.style.display = "none";
 });
@@ -97,14 +98,144 @@ search_bar.addEventListener("blur",function(){
 
 var contacts_list;
 
+if (localStorage.getItem('contacts')) {
+
+    contacts_list = localStorage.getItem('contacts');
+    contacts_list = JSON.parse(contacts_list)
+    contacts_list.forEach(element => {
+               
+        var name = element.name;
+        var number = element.phone;
+        var nom = "";
+        var num = "";
+        var if_exists = "";
+
+        var lists = document.querySelectorAll('li');
+
+        for (let i = 0; i < lists.length; i++) {
+            const sec = lists[i];
+            var val = sec.firstChild;
+            var next = sec.childNodes[1];
+            num = next.firstChild.nodeValue
+            nom = val.nodeValue;
+
+            if(name.toUpperCase() == nom.toUpperCase() && number==num)
+            {
+                if_exists = "Contact already exists";
+            }
+        }
+       
+    if(if_exists == ""){
+
+        var position = name[0];
+        var main;
+        position = position.toUpperCase();
+
+        var contacts = document.getElementById("contacts");
+        contacts = contacts.childNodes;
+        for (let i = 0; i < contacts.length; i++) {
+            if(contacts[i].id == position)
+            {
+                main = contacts[i];
+            }
+        }
+        
+        
+        // Creating elements
+       var list_elmt = document.createElement("li");
+       var p_elmt = document.createElement("p");
+       var list_del = document.createElement("button");
+       var list_up = document.createElement("button");
+
+       list_elmt.innerHTML = name;
+       p_elmt.innerHTML = number;
+       list_del.innerHTML = "Delete";
+       list_del.className = "button";
+       list_del.style.transition = "all 0.7s";
+       list_up.innerHTML = "Update";
+       list_up.className = "button";
+
+
+       list_del.addEventListener("click",function() {
+        //   list_elmt.style.display = "none";
+        var parent = list_elmt.parentNode;
+        parent.removeChild(list_elmt);
+        var actual = contacts_list
+        var final = []
+
+        actual.forEach(elm => {
+            if (element.id == elm.id) {
+                
+            }
+            else{
+                final.push(elm)
+            }
+        })
+
+        alert("Contact deleted with success  👍")
+        localStorage.setItem('contacts', JSON.stringify(final))
+
+       });
+
+       list_up.addEventListener("click",function() {
+        
+        modal_up.style.display = "flex";
+
+        up_btn.addEventListener("click",()=>{
+        var actual = contacts_list
+        var final = []
+        var contact=null;
+        
+        if(verif(name_up,number_up)){
+           modal_up.style.display = "none";
+
+           actual.forEach(elm => {
+            if (element.id == elm.id) {
+                
+            }
+            else{
+                final.push(elm)
+            }
+        })
+        contact = {
+            id: generateId(),
+            name: name_up.value,
+            phone: number_up.value,
+        }; 
+        final.push(contact)
+
+        list_elmt.style.display = "none"
+        alert("Contact updated with success  👍")
+        createContact(contact)   
+        localStorage.setItem('contacts', JSON.stringify(final))
+    }
+        });  
+       
+ 
+       });
+
+       main.appendChild(list_elmt);
+       list_elmt.appendChild(p_elmt);
+       p_elmt.appendChild(list_del);
+       p_elmt.appendChild(list_up); 
+    }
+    else
+    {
+        alert(if_exists);
+    }
+    });
+
+}
+else{
+
 fetch('https://jsonplaceholder.typicode.com/users')
   .then((response) => response.json())
   .then((json) => {console.log(json)
-                   contacts_list = json; })
+        contacts_list = json; 
+    })
   .then(()=>{
 
-            
-           
+            var up_list = [];
             contacts_list.forEach(element => {
                
                 var name = element.name;
@@ -158,6 +289,13 @@ fetch('https://jsonplaceholder.typicode.com/users')
                list_up.innerHTML = "Update";
                list_up.className = "button";
 
+               up_list.push({
+                "id": generateId(),
+                "name": name,
+                "phone": number
+               })
+
+
         
                list_del.addEventListener("click",function() {
                 //   list_elmt.style.display = "none";
@@ -166,9 +304,22 @@ fetch('https://jsonplaceholder.typicode.com/users')
 
                 fetch('https://jsonplaceholder.typicode.com/users/'+element.id, {
                     method: 'DELETE',
-                }).then(()=>{
-                    alert("Contact deleted with success  👍")
                 })
+
+                var actual = contacts_list
+                var final = []
+        
+                actual.forEach(elm => {
+                    if (element.id == elm.id) {
+                        
+                    }
+                    else{
+                        final.push(elm)
+                    }
+                })
+        
+                alert("Contact deleted with success  👍")
+                localStorage.setItem('contacts', JSON.stringify(final))
 
                });
         
@@ -192,13 +343,33 @@ fetch('https://jsonplaceholder.typicode.com/users')
                     },
                   })
                     .then((response) => response.json())
-                    .then(()=>{
-                        list_elmt.style.display = "none";
+                    
+                        var actual = contacts_list
+                        var final = []
+                        var contact=null;
+                        
+                           modal_up.style.display = "none";
+                
+                           actual.forEach(elm => {
+                            if (element.id == elm.id) {
+                                
+                            }
+                            else{
+                                final.push(elm)
+                            }
+                        })
+                        contact = {
+                            id: generateId(),
+                            name: name_up.value,
+                            phone: number_up.value,
+                        }; 
+                        final.push(contact)
+                
+                        list_elmt.style.display = "none"
                         alert("Contact updated with success  👍")
-                    })
-                    .then((json) => createContact(json))
-                    
-                    
+                        createContact(contact)   
+                        localStorage.setItem('contacts', JSON.stringify(final))
+                            
                  }
                 });  
                
@@ -215,20 +386,23 @@ fetch('https://jsonplaceholder.typicode.com/users')
                 alert(if_exists);
             }
             });
-        })      
         
+            localStorage.setItem("contacts",JSON.stringify(up_list));
+        })      
+}    
 
 
 
 
 del.addEventListener("click",function () {
-    if (confirm("Delete all contacts ?")) {
+    if (confirm("Are you sure you want to delete all contacts ?")) {
         var contact_list = document.querySelectorAll('li');
             for (let i = 0; i < contact_list.length; i++) {
                 contact_list[i].parentNode.removeChild(contact_list[i]);   
             }
             modal_add.style.display = "none";
     }
+    localStorage.setItem("contacts", " ")
 
 });
 
@@ -259,16 +433,22 @@ add.addEventListener("click",function() {
               'Content-type': 'application/json; charset=UTF-8',
             },
           })
-            .then((response) => response.json())
-            .then((json) => {
-                var exists = createContact(json)
-
-                if (!exists) {
-                    alert("Contact added with success  👍");
-                }
-            })
        }
+       
 
+        var actual = JSON.parse(localStorage.getItem("contacts"))
+        var contact=null;
+        
+        var contact = {
+            id: generateId(),
+            name: nom,
+            phone: num,
+        }; 
+        actual.push(contact)
+
+        alert("Contact updated with success  👍")
+        createContact(contact)   
+        localStorage.setItem('contacts', JSON.stringify(actual))
 
     });
 
@@ -281,7 +461,7 @@ function generateId(){
 }
 
 function createContact(element){
-    var name = element.name;
+                var name = element.name;
                 var number = element.phone;
                 var nom = "";
                 var num = "";
@@ -342,9 +522,22 @@ function createContact(element){
 
                 fetch('https://jsonplaceholder.typicode.com/users/'+element.id, {
                     method: 'DELETE',
-                }).then(()=>{
-                    alert("Contact deleted with success  👍")
                 })
+
+                var actual = JSON.parse(localStorage.getItem("contacts"))
+                var final = []
+        
+                actual.forEach(elm => {
+                    if (element.id == elm.id) {
+                        
+                    }
+                    else{
+                        final.push(elm)
+                    }
+                })
+        
+                alert("Contact deleted with success  👍")
+                localStorage.setItem('contacts', JSON.stringify(final))
 
                });
         
@@ -367,13 +560,30 @@ function createContact(element){
                       'Content-type': 'application/json; charset=UTF-8',
                     },
                   })
-                    .then((response) => response.json())
-                    .then((json) => createContact(json))
-                    .then(()=>{
-                        list_elmt.style.display = "none";
-                        alert("Contact updated with success  👍")
-                    })
                     
+                  var actual = JSON.parse(localStorage.getItem("contacts"))
+                  var final = []
+                  var contact=null;
+                            
+                actual.forEach(elm => {
+                      if (element.id == elm.id) {
+                          
+                      }
+                      else{
+                          final.push(elm)
+                      }
+                  })
+                  contact = {
+                      id: generateId(),
+                      name: name_up.value,
+                      phone: number_up.value,
+                  }; 
+                  final.push(contact)
+          
+                  list_elmt.style.display = "none"
+                  alert("Contact updated with success  👍")
+                  createContact(contact)   
+                  localStorage.setItem('contacts', JSON.stringify(final))
                     
                  }
                 });  

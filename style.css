@@ -7,20 +7,21 @@
 }
 #modal-update
 {
-    z-index: 1;
+    z-index: 9999;
     position: fixed;
+    top: 0;
     background-color: rgba(0, 0, 0, 0.712);
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100vw;
-    height: 400vh;
+    height: 100vh;
     display: none;
+    animation: fade 1s ease-in-out;
 }
 #content
 {
     background-color: white;
-    margin-bottom: 150rem;
     padding: 5rem;
     display: flex;
     flex-direction: column;
@@ -145,7 +146,7 @@ li,h2
 }
 li
 {
-    color: rgb(107, 192, 178);
+    color: rgb(0, 88, 155);
 }
 .button
 {
@@ -177,6 +178,16 @@ li
 }
 
 
+@keyframes fade {
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+
+
 @media(min-width: 1200px)
 {
     #contacts
@@ -201,4 +212,8 @@ li
     font-size: 1.5rem;
 
  }
+ #content
+{
+    padding: 3rem;
+}
 }
